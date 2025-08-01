@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather home</title>
+</head>
+<body>
+<header>
+    <h1>Weather App</h1>
+    <p th:text="${username}"></p>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</header>
+</body>
+</html>

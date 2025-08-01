@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Authorization</title>
+</head>
+<body>
+<form method="post">
+    <input type="hidden" name="Session" th:value="${session}">
+
+    <div>Username</div>
+    <input type="text" name="username" required>
+
+    <div>Password</div>
+    <input type="password" name="password" required>
+
+    <div>
+        <button type="submit">Login</button>
+    </div>
+
+    <div th:if="${error}" th:text="${error}" class="alert alert-danger"></div>
+</form>
+<div>
+    don't have an account? <a th:href="@{/registration}">Sign up here!</a>
+</div>
+</body>
+</html>
