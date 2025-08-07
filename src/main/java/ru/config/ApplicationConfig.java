@@ -2,6 +2,7 @@ package ru.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -20,13 +21,16 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
+import ru.controller.interceptor.SessionInterceptor;
 
 import javax.sql.DataSource;
 
@@ -104,14 +108,14 @@ public class ApplicationConfig implements WebMvcConfigurer {
         return new JpaTransactionManager(emf);
     }
 
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(applicationContext.getBean(SessionInterceptor.class))
-//                .excludePathPatterns("/authorization", "/registration", "/logout", "/css/**", "/js/**", "/images/**");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(applicationContext.getBean(SessionInterceptor.class))
+                .excludePathPatterns("/", "/login", "/registration", "/logout", "/css/**", "/js/**", "/images/**");
+    }
 
     @Bean
-    public jakarta.validation.Validator localValidatorFactoryBean() {
+    public Validator localValidatorFactoryBean() {
         return new LocalValidatorFactoryBean();
     }
 

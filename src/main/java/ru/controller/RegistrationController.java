@@ -27,11 +27,6 @@ public class RegistrationController {
         this.authorizationService = authorizationService;
     }
 
-    @GetMapping("/")
-    public String getIndexPage() {
-        return "index";
-    }
-
     @GetMapping("/registration")
     public String showRegistrationForm() {
         return "registration";

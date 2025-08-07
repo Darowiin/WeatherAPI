@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Search Page</title>
+</head>
+<body>
+<header>
+    <h1>Weather App</h1>
+    <p th:text="${username}"></p>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</header>
+
+<form action="/search" method="post">
+    <label for="cityName">
+        <input type="text" id="cityName" name="cityName" placeholder="Enter location" required>
+    </label>
+    <button type="submit">Search</button>
+</form>
+
+<div th:if="${locations != null}">
+    <h1>Locations:</h1>
+    <div th:each="index : ${#numbers.sequence( 0, #arrays.length(locations)-1)}" >
+        <form action="/home" method="post">
+            <input type="hidden" name="name" th:value="${locations[index].name()}">
+            <input type="hidden" name="lat" th:value="${locations[index].lat()}">
+            <input type="hidden" name="lon" th:value="${locations[index].lon()}">
+            <input type="hidden" name="country" th:value="${locations[index].country()}">
+            <input type="hidden" name="state" th:value="${locations[index].state()}">
+            <div>
+                <h2 th:text="${locations[index].name()}"></h2>
+                <p th:text="${'Latitude: ' + locations[index].lat()}"></p>
+                <p th:text="${'Longitude: ' + locations[index].lon()}"></p>
+                <p th:text="${'Country: ' + locations[index].country()}"></p>
+                <p th:text="${'State: ' + locations[index].state()}"></p>
+            </div>
+            <button type="submit">Add</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Weather home</title>
+    <title>Weather Home Page</title>
 </head>
 <body>
 <header>
@@ -12,5 +12,30 @@
         <button type="submit">Logout</button>
     </form>
 </header>
+
+    <form action="/search" method="post">
+        <label for="cityName">
+            <input type="text" id="cityName" name="cityName" placeholder="Enter location" required>
+        </label>
+        <button type="submit">Search</button>
+    </form>
+
+    <div th:if="${locations != null} ">
+        <div th:each="index : ${#numbers.sequence( 0, #arrays.length(locations)-1)}" >
+            <form th:action="@{/home/delete}" method="post">
+                <input type="hidden" name="locationId" th:value="${locations[index].getId()}" />
+                <button class="btn-close" type="submit" aria-label="Delete"></button>
+            </form>
+            <div>
+                <h2 th:text="${locations[index].getName()}"></h2>
+            </div>
+            <div>
+                <h3 th:text="${weatherResponses[index].temp() + '°C'}"></h3>
+                <p th:text="${'Feels like ' + weatherResponses[index].feelsLike() + '°C ' + weatherResponses[index].weatherDescription()}"></p>
+                <p th:text="${'Humidity: ' + weatherResponses[index].humidity() + '%'}"></p>
+                <p th:text="${'Wind speed: ' + weatherResponses[index].windSpeed() + 'm/s'}"></p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
