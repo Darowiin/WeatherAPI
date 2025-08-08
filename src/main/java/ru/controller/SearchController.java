@@ -43,6 +43,9 @@ public class SearchController {
                                 Model model,
                                 @Valid CitySearchForm citySearchForm,
                                 BindingResult bindingResult) {
+        if (request.getAttribute("user") == null) {
+            throw new SessionNotFoundException("Session not found");
+        }
         User user = (User) request.getAttribute("user");
         model.addAttribute("username", user.getLogin());
 
