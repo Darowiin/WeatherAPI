@@ -44,12 +44,12 @@ public class RegistrationController {
         try {
             registrationService.save(registrationForm.username(), registrationForm.password());
         } catch (DuplicateLoginException e) {
-            model.addAttribute("error", "Такой пользователь уже существует. Пожалуйста, выберите другое имя пользователя.");
+            model.addAttribute("error", "User with this login already exists.");
             return "registration";
         }
         UUID sessionId = authorizationService.createSession(registrationForm.username(), registrationForm.password());
         setSessionCookie(response, sessionId);
-        return "redirect:/home";
+        return "redirect:/";
     }
 
     private void setSessionCookie(HttpServletResponse response, UUID sessionId) {

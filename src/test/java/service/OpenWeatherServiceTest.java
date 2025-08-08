@@ -135,7 +135,8 @@ public class OpenWeatherServiceTest {
         BigDecimal lon = new BigDecimal("37.6156");
         WeatherResponse mockWeather = new WeatherResponse(20, 20,
                 71, BigDecimal.valueOf(4.27),
-                "overcast clouds");
+                "overcast clouds",
+                "04d");
 
         when(restTemplate.getForObject(anyString(), eq(WeatherResponse.class))).thenReturn(mockWeather);
 

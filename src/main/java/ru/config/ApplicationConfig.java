@@ -21,7 +21,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -111,7 +110,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(applicationContext.getBean(SessionInterceptor.class))
-                .excludePathPatterns("/", "/login", "/registration", "/logout", "/css/**", "/js/**", "/images/**");
+                .excludePathPatterns("/login", "/registration", "/error", "/logout", "/resources/**", "/css/**", "/js/**", "/images/**");
     }
 
     @Bean

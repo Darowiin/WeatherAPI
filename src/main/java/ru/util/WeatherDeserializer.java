@@ -16,15 +16,18 @@ public class WeatherDeserializer extends JsonDeserializer<WeatherResponse> {
     public WeatherResponse deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
 
-        JsonNode productNode = jp.getCodec().readTree(jp);
+        JsonNode node = jp.getCodec().readTree(jp);
+        JsonNode mainNode = node.get("main");
+        JsonNode weatherNode = node.get("weather").get(0);
 
-        int temp = productNode.get("main").get("temp").intValue();
-        int feelsLike = productNode.get("main").get("feels_like").intValue();
-        int humidity = productNode.get("main").get("humidity").intValue();
-        BigDecimal windSpeed = productNode.get("wind").get("speed").decimalValue();
-        String weatherDescription = productNode.get("weather").get(0).get("description").asText();
+        int temp = mainNode.get("temp").intValue();
+        int feelsLike = mainNode.get("feels_like").intValue();
+        int humidity = mainNode.get("humidity").intValue();
+        BigDecimal windSpeed = node.get("wind").get("speed").decimalValue();
+        String weatherDescription = weatherNode.get("description").asText();
+        String icon = weatherNode.get("icon").asText();
 
-        return new WeatherResponse(temp, feelsLike, humidity, windSpeed, weatherDescription);
+        return new WeatherResponse(temp, feelsLike, humidity, windSpeed, weatherDescription, icon);
     }
 
 }

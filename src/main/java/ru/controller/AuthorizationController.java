@@ -40,9 +40,9 @@ public class AuthorizationController {
         UUID sessionId = authorizationService.getCorrectSessionId(authorizationForm.username(), authorizationForm.password());
         if (sessionId != null) {
             setSessionCookie(response, sessionId);
-            return "redirect:/home";
+            return "redirect:/";
         } else {
-            model.addAttribute("error", "Неверный логин или пароль.");
+            model.addAttribute("error", "Invalid username or password.");
             return "authorization";
         }
     }

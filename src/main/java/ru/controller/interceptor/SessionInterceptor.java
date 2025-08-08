@@ -27,6 +27,27 @@ public class SessionInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
+        if (request.getRequestURI().equals("/")) {
+            if (request.getCookies() != null) {
+                try {
+                    UUID sessionId = Arrays.stream(request.getCookies())
+                            .filter(cookie -> "sessionId".equals(cookie.getName()))
+                            .map(Cookie::getValue)
+                            .findFirst()
+                            .map(UUID::fromString)
+                            .orElse(null);
+
+                    if (sessionId != null) {
+                        User user = sessionService.getUserBySessionId(sessionId);
+                        request.setAttribute("sessionId", sessionId);
+                        request.setAttribute("user", user);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+            return true;
+        }
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             try {
@@ -42,11 +63,11 @@ public class SessionInterceptor implements HandlerInterceptor {
                 request.setAttribute("user", user);
                 return true;
             } catch (SessionNotFoundException e) {
-                response.sendRedirect("/authorization");
+                response.sendRedirect("/login");
                 return false;
             }
         } else {
-            response.sendRedirect("/authorization");
+            response.sendRedirect("/login");
             return false;
         }
     }

@@ -35,18 +35,8 @@ public class LocationService {
     }
 
     @Transactional
-    public void delete(Location location) {
-        locationRepository.delete(location);
-    }
-
-    @Transactional
     public List<Location> findByUser(User user) {
         return locationRepository.findByUser(user);
-    }
-
-    @Transactional
-    public Location findById(Integer id) {
-        return locationRepository.findById(id).orElse(null);
     }
 
     public List<WeatherResponse> getWeatherForLocations(List<Location> locations) {

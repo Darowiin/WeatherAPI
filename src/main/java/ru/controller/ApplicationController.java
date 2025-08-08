@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +15,7 @@ import ru.entity.Location;
 import ru.entity.User;
 import ru.entity.dto.LocationsResponse;
 import ru.entity.dto.WeatherResponse;
+import ru.exception.SessionNotFoundException;
 import ru.service.LocationService;
 import ru.service.SessionService;
 
@@ -40,7 +40,18 @@ public class ApplicationController {
     }
 
     @GetMapping("/")
-    public String getIndexPage() {
+    public String getIndexPage(HttpServletRequest request, Model model) {
+        User user = (User) request.getAttribute("user");
+
+        if (user != null) {
+            model.addAttribute("username", user.getLogin());
+            List<Location> locations = locationService.findByUser(user);
+            List<WeatherResponse> weatherResponses = locationService.getWeatherForLocations(locations);
+
+            model.addAttribute("locations", locations);
+            model.addAttribute("weatherResponses", weatherResponses);
+        }
+
         return "index";
     }
 
@@ -56,49 +67,30 @@ public class ApplicationController {
         return "redirect:/";
     }
 
-    @GetMapping("/home")
-    public String getHomePage(HttpServletRequest request, Model model) {
+    @PostMapping("/")
+    public String addLocation(HttpServletRequest request,
+                              @ModelAttribute LocationsResponse locationsResponse) {
         if (request.getAttribute("user") == null) {
-            return "redirect:/error";
+            throw new SessionNotFoundException("Session not found");
         }
         User user = (User) request.getAttribute("user");
-        List<Location> locations = locationService.findByUser(user);
-
-        List<WeatherResponse> weatherResponses = locationService.getWeatherForLocations(locations);
-
-        model.addAttribute("locations", locations);
-        model.addAttribute("username", user.getLogin());
-        model.addAttribute("weatherResponses", weatherResponses);
-
-        return "home";
-    }
-
-    @PostMapping("/home")
-    public String postHomePage(HttpServletRequest request,
-                               Model model,
-                               @ModelAttribute LocationsResponse locationsResponse) {
-        if (request.getAttribute("user") == null) {
-            return "redirect:/error";
-        }
-        User user = (User) request.getAttribute("user");
-        model.addAttribute("username", user.getLogin());
 
         locationService.save(locationsResponse, user);
 
-        return "redirect:/home";
+        return "redirect:/";
     }
 
-    @PostMapping("/home/delete")
+    @PostMapping("/delete-location")
     public String deleteLocationPost(HttpServletRequest request,
                                      @RequestParam("locationId") int locationId) {
         if (request.getAttribute("user") == null) {
-            return "redirect:/error";
+            throw new SessionNotFoundException("Session not found");
         }
 
         if (locationService.existsById(locationId)) {
             locationService.deleteById(locationId);
         }
 
-        return "redirect:/home";
+        return "redirect:/";
     }
 }

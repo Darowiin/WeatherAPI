@@ -11,6 +11,7 @@ public record WeatherResponse(
         int feelsLike,
         int humidity,
         BigDecimal windSpeed,
-        String weatherDescription
+        String weatherDescription,
+        String icon
 ) {
 }
