@@ -40,17 +40,23 @@ public class OpenWeatherServiceTest {
 
     private OpenWeatherService openWeatherService;
 
-    private final String API_KEY;
-    private final String API_LOCATIONS_URL;
-    private final String API_WEATHER_URL;
+    private static String API_KEY;
+    private static String API_LOCATIONS_URL;
+    private static String API_WEATHER_URL;
 
     @Autowired
     public OpenWeatherServiceTest(@Value("${openweather.api.key}") String apiKey,
                                   @Value("${openweather.api.locations.url}") String apiLocationsUrl,
                                   @Value("${openweather.api.weather.url}") String apiWeatherUrl) {
-        API_KEY = apiKey;
-        API_LOCATIONS_URL = apiLocationsUrl;
-        API_WEATHER_URL = apiWeatherUrl;
+        if (API_KEY == null) {
+            API_KEY = apiKey;
+        }
+        if (API_LOCATIONS_URL == null) {
+            API_LOCATIONS_URL = apiLocationsUrl;
+        }
+        if (API_WEATHER_URL == null) {
+            API_WEATHER_URL = apiWeatherUrl;
+        }
     }
 
     @BeforeEach

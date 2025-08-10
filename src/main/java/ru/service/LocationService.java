@@ -7,10 +7,12 @@ import ru.entity.Location;
 import ru.entity.User;
 import ru.entity.dto.LocationsResponse;
 import ru.entity.dto.WeatherResponse;
+import ru.exception.DuplicateLocationException;
 import ru.repository.LocationRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 public class LocationService {
@@ -25,12 +27,19 @@ public class LocationService {
 
     @Transactional
     public void save(LocationsResponse locationsResponse, User user) {
+        String locationName = locationsResponse.name();
+        if (locationsResponse.country() != null && !locationsResponse.country().isEmpty()) {
+            locationName += ", " + locationsResponse.country();
+        }
         Location location = Location.builder()
-                .name(locationsResponse.name() + ", " + locationsResponse.country())
                 .user(user)
+                .name(locationName)
                 .latitude(locationsResponse.lat())
                 .longitude(locationsResponse.lon())
                 .build();
+        if (locationRepository.existsByNameAndUser(locationName, user)) {
+            throw new DuplicateLocationException("Location already exists: " + locationName);
+        }
         locationRepository.save(location);
     }
 
@@ -40,12 +49,13 @@ public class LocationService {
     }
 
     public List<WeatherResponse> getWeatherForLocations(List<Location> locations) {
-        List<WeatherResponse> weatherResponses = new ArrayList<>();
-        for (Location location: locations) {
-            WeatherResponse weatherResponse = openWeatherService.getWeatherByCoordinates(location.getLatitude(), location.getLongitude());
-            weatherResponses.add(weatherResponse);
-        }
-        return weatherResponses;
+        List<CompletableFuture<WeatherResponse>> futures = locations.stream()
+                .map(location -> CompletableFuture.supplyAsync(() ->
+                        openWeatherService.getWeatherByCoordinates(location.getLatitude(), location.getLongitude())))
+                .toList();
+        return futures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
     }
 
     public boolean existsById(int locationId) {

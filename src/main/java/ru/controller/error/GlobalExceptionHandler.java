@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import ru.exception.DuplicateLocationException;
 import ru.exception.InvalidLocationDataException;
+import ru.exception.LocationNotFoundException;
 import ru.exception.SessionNotFoundException;
 
 @ControllerAdvice
@@ -25,6 +27,24 @@ public class GlobalExceptionHandler {
         ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("errorMessage", ex.getMessage());
         modelAndView.addObject("errorCode", HttpStatus.BAD_REQUEST.value());
+        return modelAndView;
+    }
+
+    @ExceptionHandler(LocationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleLocationNotFound(LocationNotFoundException ex) {
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        modelAndView.addObject("errorCode", HttpStatus.NOT_FOUND.value());
+        return modelAndView;
+    }
+
+    @ExceptionHandler(DuplicateLocationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ModelAndView handleDuplicateLocation(DuplicateLocationException ex) {
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        modelAndView.addObject("errorCode", HttpStatus.CONFLICT.value());
         return modelAndView;
     }
 

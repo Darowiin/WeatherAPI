@@ -10,4 +10,5 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     List<Location> findByUser(User user);
     boolean existsById(Integer id);
     void deleteById(Integer id);
+    boolean existsByNameAndUser(String locationName, User user);
 }
