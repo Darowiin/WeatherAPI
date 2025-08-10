@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Locations</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .location-card {
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        .location-card:hover {
+            transform: translateY(-5px);
+        }
+        .search-form {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .search-form button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+        }
+        .search-form input {
+            padding-right: 50px;
+        }
+        .location-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .location-detail i {
+            width: 20px;
+            margin-right: 8px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div class="d-flex align-items-center">
+            <img src="/resources/weather-app.png" height="40px" alt="Weather App Logo" class="me-2">
+            <h1 class="h3 mb-0">Location Search</h1>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-3">Welcome, <strong th:text="${username}"></strong>!</span>
+            <form th:action="@{/logout}" method="post">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <div class="search-form">
+        <form action="/search" method="post">
+            <div class="input-group">
+                <input type="text" id="cityName" name="cityName" class="form-control" placeholder="Enter city name">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${locations != null}">
+        <h2 class="mb-4">Search Results</h2>
+        <div class="row">
+            <div class="col-md-4 col-sm-6" th:each="index : ${#numbers.sequence(0, #arrays.length(locations)-1)}">
+                <div class="card location-card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3" th:text="${locations[index].name()}"></h3>
+
+                        <div class="location-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span th:text="${'Country: ' + locations[index].country()}"></span>
+                        </div>
+
+                        <div class="location-detail" th:if="${locations[index].state() != null}">
+                            <i class="fas fa-map"></i>
+                            <span th:text="${'State: ' + locations[index].state()}"></span>
+                        </div>
+
+                        <div class="location-detail">
+                            <i class="fas fa-globe-americas"></i>
+                            <span th:text="${'Lat: ' + locations[index].lat() + ', Lon: ' + locations[index].lon()}"></span>
+                        </div>
+
+                        <form action="/" method="post" class="mt-3">
+                            <input type="hidden" name="name" th:value="${locations[index].name()}">
+                            <input type="hidden" name="lat" th:value="${locations[index].lat()}">
+                            <input type="hidden" name="lon" th:value="${locations[index].lon()}">
+                            <input type="hidden" name="country" th:value="${locations[index].country()}">
+                            <input type="hidden" name="state" th:value="${locations[index].state()}">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-plus-circle me-2"></i>Add to My Locations
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a th:href="@{/}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

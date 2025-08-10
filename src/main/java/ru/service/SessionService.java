@@ -8,6 +8,7 @@ import ru.entity.User;
 import ru.repository.SessionRepository;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,7 +31,7 @@ public class SessionService {
     }
 
     @Transactional
-    public Session findById(UUID sessionId) {
+    public Optional<Session> findById(UUID sessionId) {
         return sessionRepository.findById(sessionId);
     }
 
@@ -46,22 +47,23 @@ public class SessionService {
 
     @Transactional
     public User getUserBySessionId(UUID sessionId) {
-        Session session = findById(sessionId);
+        Optional<Session> optSession = findById(sessionId);
+        if (optSession.isEmpty()) {
+            return null;
+        }
+
+        Session session = optSession.get();
         if (isSessionValid(session)) {
             return session.getUser();
         } else {
-            if (session != null) {
-                deleteSession(session);
-            }
+            deleteSession(session);
             return null;
         }
     }
 
     @Transactional
     public void invalidateSession(UUID sessionId) {
-        Session session = findById(sessionId);
-        if (session != null) {
-            deleteSession(session);
-        }
+        Optional<Session> optSession = findById(sessionId);
+        optSession.ifPresent(this::deleteSession);
     }
 }

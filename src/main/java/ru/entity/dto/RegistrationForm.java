@@ -4,14 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegistrationForm (
-        @NotBlank(message = "Имя пользователя не может быть пустым.")
-        @Size(min = 3, max = 20, message = "Имя пользователя должно быть от 3 до 20 символов.")
+        @NotBlank(message = "Username cannot be empty.")
+        @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters.")
         String username,
 
-        @NotBlank(message = "Пароль не может быть пустым.")
-        @Size(min = 6, message = "Пароль должен быть не менее 6 символов.")
+        @NotBlank(message = "Password cannot be empty.")
+        @Size(min = 6, message = "Password must be at least 6 characters long.")
         String password,
 
-        @NotBlank(message = "Повтор пароля не может быть пустым.")
+        @NotBlank(message = "Password cannot be empty.")
+        @Size(min = 6, message = "Password must be at least 6 characters long.")
         String repeatedPassword
 ) {}
